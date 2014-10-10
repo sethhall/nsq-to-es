@@ -119,7 +119,7 @@ func (ph *PublishHandler) HandleMessage(m *nsq.Message) error {
 	//fmt.Printf("sincelastbulk: %s   maxbulksecs: %s\n", sinceLastBulk, *maxBulkTime)
 	//fmt.Printf("bulksize: %d\n", *bulkSize)
 	fmt.Printf("Length of queued items: %d\n", queuedItemsNum)
-	if queuedItemsNum >= *bulkSize || sinceLastBulk > *maxBulkTime {
+	if queuedItemsNum >= *bulkSize || (queuedItemsNum > 0 && sinceLastBulk > *maxBulkTime) {
 		log.Printf("last batch time: %s number of items %d\n", sinceLastBulk, queuedItemsNum)
 		lastBulkTime = time.Now()
 
