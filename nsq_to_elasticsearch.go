@@ -63,7 +63,7 @@ func init() {
 	flag.Var(&nsqdTCPAddrs, "nsqd-tcp-address", "nsqd TCP address (may be given multiple times)")
 	flag.Var(&lookupdHTTPAddrs, "lookupd-http-address", "lookupd HTTP address (may be given multiple times)")
 
-	queuedItems = make([]string, *bulkSize)
+	queuedItems = make([]string, 0)
 }
 
 type Durations []time.Duration
@@ -119,7 +119,7 @@ func (ph *PublishHandler) HandleMessage(m *nsq.Message) error {
 	//fmt.Printf("sincelastbulk: %s   maxbulksecs: %s\n", sinceLastBulk, *maxBulkTime)
 	//fmt.Printf("bulksize: %d\n", *bulkSize)
 	fmt.Printf("Length of queued items: %d\n", queuedItemsNum)
-	if queuedItemsNum >= *bulkSize || (queuedItemsNum > 0 && sinceLastBulk > *maxBulkTime) {
+	if queuedItemsNum >= *bulkSize || (queuedItemsNum > 1 && sinceLastBulk > *maxBulkTime) {
 		log.Printf("last batch time: %s number of items %d\n", sinceLastBulk, queuedItemsNum)
 		lastBulkTime = time.Now()
 
@@ -133,7 +133,7 @@ func (ph *PublishHandler) HandleMessage(m *nsq.Message) error {
 
 		// If the data sent, flush the queuedItems
 		queuedItemsNum = 0
-		queuedItems = make([]string, *bulkSize)
+		queuedItems = make([]string, 0)
 
 		log.Printf("done preparing string\n")
 
